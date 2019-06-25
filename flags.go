@@ -29,6 +29,7 @@ type KubeHTTPProxyFlags struct {
 		Storage         string
 		VCLTemplate     string
 		VCLTemplatePoll bool
+		WorkingDir      string
 	}
 }
 
@@ -51,6 +52,7 @@ func (f *KubeHTTPProxyFlags) Parse() error {
 	flag.StringVar(&f.Varnish.Storage, "varnish-storage", "file,/tmp/varnish-data,1G", "varnish storage config")
 	flag.StringVar(&f.Varnish.VCLTemplate, "varnish-vcl-template", "/etc/varnish/default.vcl.tmpl", "VCL template file")
 	flag.BoolVar(&f.Varnish.VCLTemplatePoll, "varnish-vcl-template-poll", false, "poll for file changes instead of using inotify (useful on some network filesystems)")
+	flag.StringVar(&f.Varnish.WorkingDir, "varnish-working-dir", "/", "Varnish working directory (see -n option)")
 
 	flag.Parse()
 

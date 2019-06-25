@@ -2,15 +2,16 @@ package controller
 
 import (
 	"fmt"
-	"github.com/golang/glog"
 	"os"
 	"os/exec"
+
+	"github.com/golang/glog"
 )
 
 func (v *VarnishController) Run() error {
 	glog.Infof("waiting for initial configuration before starting Varnish")
 
-	v.backend = <- v.backendUpdates
+	v.backend = <-v.backendUpdates
 	target, err := os.Create(v.configFile)
 	if err != nil {
 		return err
@@ -43,6 +44,7 @@ func (v *VarnishController) Run() error {
 func (v *VarnishController) startVarnish() (*exec.Cmd, <-chan error) {
 	c := exec.Command(
 		"varnishd",
+		"-n", v.WorkingDir,
 		"-F",
 		"-f", v.configFile,
 		"-S", v.SecretFile,

@@ -1,10 +1,11 @@
 package controller
 
 import (
-	"github.com/mittwald/kube-httpcache/watcher"
 	"io"
 	"io/ioutil"
 	"text/template"
+
+	"github.com/mittwald/kube-httpcache/watcher"
 )
 
 type TemplateData struct {
@@ -19,6 +20,7 @@ type VarnishController struct {
 	FrontendPort int
 	AdminAddr    string
 	AdminPort    int
+	WorkingDir   string
 
 	vclTemplate        *template.Template
 	vclTemplateUpdates chan []byte
@@ -36,6 +38,7 @@ func NewVarnishController(
 	frontendPort int,
 	adminAddr string,
 	adminPort int,
+	workingDir string,
 	backendUpdates chan *watcher.BackendConfig,
 	templateUpdates chan []byte,
 	vclTemplateFile string,
@@ -62,6 +65,7 @@ func NewVarnishController(
 		FrontendPort:       frontendPort,
 		AdminAddr:          adminAddr,
 		AdminPort:          adminPort,
+		WorkingDir:         workingDir,
 		vclTemplate:        tmpl,
 		vclTemplateUpdates: templateUpdates,
 		backendUpdates:     backendUpdates,
@@ -70,7 +74,7 @@ func NewVarnishController(
 	}, nil
 }
 
-func (v *VarnishController) renderVCL(target io.Writer, backendList watcher.BackendList, primary *watcher.Backend) (error) {
+func (v *VarnishController) renderVCL(target io.Writer, backendList watcher.BackendList, primary *watcher.Backend) error {
 	err := v.vclTemplate.Execute(target, &TemplateData{
 		Backends:       backendList,
 		PrimaryBackend: primary,

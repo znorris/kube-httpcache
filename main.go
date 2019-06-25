@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+
 	"github.com/golang/glog"
 	"github.com/mittwald/kube-httpcache/controller"
 	"github.com/mittwald/kube-httpcache/watcher"
@@ -53,9 +54,9 @@ func main() {
 	go func() {
 		for {
 			select {
-			case err := <- backendErrors:
+			case err := <-backendErrors:
 				glog.Errorf("error while watching backends: %s", err.Error())
-			case err := <- templateErrors:
+			case err := <-templateErrors:
 				glog.Errorf("error while watching template changes: %s", err.Error())
 			}
 		}
@@ -68,6 +69,7 @@ func main() {
 		opts.Frontend.Port,
 		opts.Admin.Address,
 		opts.Admin.Port,
+		opts.Varnish.WorkingDir,
 		backendUpdates,
 		templateUpdates,
 		opts.Varnish.VCLTemplate,
